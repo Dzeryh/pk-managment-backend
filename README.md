@@ -86,7 +86,7 @@ un décorateur est évalué avant la lecture de `.env`, une variable y serait in
 
 | Script | Effet |
 | --- | --- |
-| `npm run start:dev` | Développement (tsx watch, rechargement à chaud) |
+| `npm run start:dev` | Développement (`nest start --watch`, rechargement à chaud) |
 | `npm run start` | Démarrage direct depuis les sources |
 | `npm run build` puis `npm run start:prod` | Build `tsc` puis exécution de `dist/main.js` |
 | `npm run typecheck` | Vérification de types sans émission |
