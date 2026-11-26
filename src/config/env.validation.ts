@@ -17,7 +17,8 @@ const VideEnAbsent = (): PropertyDecorator =>
 
 /**
  * Convertit explicitement en nombre (ne dépend pas des métadonnées de
- * décorateurs, donc fonctionne avec tsx). Vide → absent. Valeur invalide → NaN,
+ * décorateurs, contrairement à `enableImplicitConversion`). Vide → absent.
+ * Valeur invalide → NaN,
  * que @IsInt rejette avec le message prévu.
  */
 const EntierDepuisEnv = (): PropertyDecorator =>
@@ -26,6 +27,7 @@ const EntierDepuisEnv = (): PropertyDecorator =>
     if (typeof value === 'number') return value;
     return Number(value);
   });
+
 export class EnvironmentVariables {
   @IsOptional()
   @IsIn(['development', 'test', 'production'], {
@@ -39,6 +41,7 @@ export class EnvironmentVariables {
   @Min(1)
   @Max(65535)
   PORT?: number;
+
   @IsOptional()
   @EntierDepuisEnv()
   @IsInt({ message: 'THROTTLE_TTL_MS doit être un entier.' })
@@ -50,7 +53,7 @@ export class EnvironmentVariables {
   DB_HOST?: string;
 
   @IsOptional()
-  @VideEnAbsent()
+  @EntierDepuisEnv()
   @IsInt({ message: 'DB_PORT doit être un entier.' })
   @Min(1)
   @Max(65535)
@@ -73,14 +76,14 @@ export class EnvironmentVariables {
   JWT_ACCESS_SECRET!: string;
 
   @IsOptional()
-  @VideEnAbsent()
+  @EntierDepuisEnv()
   @IsInt({ message: 'JWT_ACCESS_TTL_SECONDS doit être un entier.' })
   @Min(60, { message: 'JWT_ACCESS_TTL_SECONDS doit être au moins 60 secondes.' })
   @Max(86_400)
   JWT_ACCESS_TTL_SECONDS?: number;
 
   @IsOptional()
-  @VideEnAbsent()
+  @EntierDepuisEnv()
   @IsInt({ message: 'REFRESH_TOKEN_TTL_DAYS doit être un entier.' })
   @Min(1)
   @Max(365)
@@ -96,7 +99,7 @@ export class EnvironmentVariables {
   CORS_ORIGINS?: string;
 
   @IsOptional()
-  @VideEnAbsent()
+  @EntierDepuisEnv()
   @IsInt({ message: 'THROTTLE_LIMIT doit être un entier.' })
   @Min(1)
   THROTTLE_LIMIT?: number;
@@ -120,7 +123,6 @@ export class EnvironmentVariables {
 
 export function validateEnvironment(config: Record<string, unknown>): EnvironmentVariables {
   const instance = plainToInstance(EnvironmentVariables, config, {
-    enableImplicitConversion: true,
     exposeDefaultValues: false,
   });
 
